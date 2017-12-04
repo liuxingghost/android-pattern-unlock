@@ -79,9 +79,18 @@ Y[9]=$(( ${ROW_3} * ${MULTIPLIER} ))
 
 # Function definitions
 
+LockScreen() {
+  if [ "$(adb shell dumpsys power | grep 'Display Power' |  grep -oE '(ON|OFF)')" == "ON" ] ; then
+      echo "Screen is already on."
+      echo "Turning screen off."
+      adb shell input keyevent 26         # KEYCODE_POWER
+      sleep 1
+  fi
+}
+
 WakeScreen() {
 	if [ "$WAKE_SCREEN_ENABLED" = true ]; then
-		adb shell input keyevent 26
+		adb shell input keyevent 26           # KEYCODE_POWER
 	fi
 }
 
@@ -92,7 +101,7 @@ SwipeUp() {
 }
 
 StartTouch() {
-	adb shell sendevent /dev/input/event2 3 57 14
+	adb shell sendevent /dev/input/event1 3 57 14
 }
 
 SendCoordinates () {
@@ -103,8 +112,8 @@ SendCoordinates () {
 }
 
 FinishTouch() {
-	adb shell sendevent /dev/input/event2 3 57 4294967295
-	adb shell sendevent /dev/input/event2 0 0 0
+	adb shell sendevent /dev/input/event1 3 57 4294967295
+	adb shell sendevent /dev/input/event1 0 0 0
 }
 
 SwipePattern() {
@@ -117,6 +126,7 @@ SwipePattern() {
 
 # Actions
 
+LockScreen
 WakeScreen
 SwipeUp
 StartTouch
